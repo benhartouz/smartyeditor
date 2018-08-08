@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>{{appName}}</title>
+
+  <script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+  <style>
+    body{
+      padding: 0px;
+      padding-left: 15px;
+    }
+    textarea{
+      width: 100%;
+      height: 500px;
+    }
+    a{
+      text-decoration: none;
+      background: #ccc;
+      padding: 12px;
+      display: block;
+      width: 15%;
+      margin: 5px 0px;
+      text-align: center;
+      text-transform: uppercase;
+      word-spacing: unset;
+      color: #000;
+    }
+    #editor {
+        margin: 0;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        float: left;
+    }
+    #panel{
+      float: left;
+      background: red;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header top -->
+  <div id="header_top">  
+    <p>
+      <span style="color:blue;font-size:20px;">Smarty Editor : </span> 
+      <p style="font-size:18px;">Lets you create your own styles or override default CSS code of published theme.</p>
+    </p>  
+  </div>
+  <div style="clear:both;height:20px;"></div>
+  <!-- Editor -->
+  <div style="position: relative;width: 1050px;height: 500px;">
+      <div id="editor">p {
+  color: red;
+  text-align: center;
+}</div>
+  </div>
+
+  <a href="Update" id="updateValue" style="margin-top: 17px;">Update</a>
+
+  <div>
+    <h3 style="text-decoration: underline;">Features : </h3>
+    <ul>
+        <li>Syntax highlighting</li>
+        <li>Automatic indent and outdent</li>
+        <li>Highlight matching parentheses</li>
+        <li>Toggle between soft tabs and real tabs</li>
+        <li>Displays hidden characters</li>
+        <li>Drag and drop text using the mouse</li>
+        <li>Line wrapping</li>
+        <li>Code folding</li>
+        <li>Multiple cursors and selections</li>
+        <li>Cut, copy, and paste functionality</li>
+    </ul>
+    <hr>
+    <p><span style="color: red;text-transform: uppercase;">Important note : </span> If you want to uninstall this App please remove all CSS code first.</p>
+  </div>
+
+
+<script src="ace-builds-master/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+<link rel="stylesheet" href="ace-builds-master/src-min-noconflict/" type="text/css">
+<script>  
+
+      // Update css file
+      $("#updateValue").on("click" , function(e){
+          e.preventDefault();
+          var value = $(this).data("ace_object").getValue();
+          // Start a request
+          var request = $.post({
+              url : "/api/update" , 
+              data : {
+                  value : value
+              }
+          });
+          // Rquest done
+          request.done(function(result){ 
+              if(result.code = 200){
+                   alert("Css file updated");
+              }else{
+                  alert("Cannot update this file");
+              }
+          });
+          // Request fail
+          request.fail(function(err){ 
+              alert("There as an fatal error please try again later ;)");
+          });
+      });
+
+      // Ace Editor
+      var editor = ace.edit("editor");
+      editor.setTheme("ace/theme/monokai");
+      editor.session.setMode("ace/mode/css");
+      editor.setFontSize(16);
+      editor.setOptions({
+          enableBasicAutocompletion: true,
+          enableSnippets: true
+      });
+      // use setOptions method to set several options at once
+      editor.setOptions({
+          autoScrollEditorIntoView: true,
+          copyWithEmptySelection: true,
+      });
+
+      $("#updateValue").data("ace_object",editor);
+
+      editor.on("change", function(e){
+          console.info("on Changing");
+          console.log(e);
+      });
+
+  </script>
+</body>
+</html>
